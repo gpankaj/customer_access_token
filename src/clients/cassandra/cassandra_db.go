@@ -15,7 +15,7 @@ func init() {
 	// So we in this case to define cluster value at global level we need not use ":="
 	cluster := gocql.NewCluster("127.0.0.1")
 
-	cluster.Keyspace = "oauth"
+	cluster.Keyspace = "customeroauth"
 	cluster.Consistency = gocql.Quorum
 
 	var err error

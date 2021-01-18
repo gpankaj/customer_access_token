@@ -3,10 +3,11 @@ package app
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gpankaj/storage_access_tokken/src/http"
-	"github.com/gpankaj/storage_access_tokken/src/repository/db"
-	"github.com/gpankaj/storage_access_tokken/src/repository/rest"
-	"github.com/gpankaj/storage_access_tokken/src/services/access_token_service"
+	"github.com/gpankaj/customer_access_token/src/http"
+	"github.com/gpankaj/customer_access_token/src/repository/db"
+
+	"github.com/gpankaj/customer_access_token/src/repository/rest"
+	"github.com/gpankaj/customer_access_token/src/services/access_token_service"
 )
 
 var (

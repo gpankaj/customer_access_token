@@ -2,8 +2,8 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gpankaj/storage_access_tokken/src/domain/access_token"
-	"github.com/gpankaj/storage_access_tokken/src/services/access_token_service"
+	"github.com/gpankaj/customer_access_token/src/domain/access_token"
+	"github.com/gpankaj/customer_access_token/src/services/access_token_service"
 	"github.com/gpankaj/go-utils/rest_errors_package"
 
 	"net/http"

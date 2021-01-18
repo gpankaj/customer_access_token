@@ -2,9 +2,9 @@ package access_token_service
 
 import (
 	"errors"
-	"github.com/gpankaj/storage_access_tokken/src/domain/access_token"
-	"github.com/gpankaj/storage_access_tokken/src/repository/db"
-	"github.com/gpankaj/storage_access_tokken/src/repository/rest"
+	"github.com/gpankaj/customer_access_token/src/domain/access_token"
+	"github.com/gpankaj/customer_access_token/src/repository/db"
+	"github.com/gpankaj/customer_access_token/src/repository/rest"
 	rest_errors_package	"github.com/gpankaj/go-utils/rest_errors_package"
 	"log"
 
@@ -47,18 +47,18 @@ func (s *service) Create(request access_token.AccessTokenRequest) (*access_token
 	//TODO: Support both grant types: client_credentials and password
 
 	// Authenticate the user against the Users API:
-	partner, err := s.restUsersRepo.LoginPartner(request.Email_id, request.Password)
+	customer, err := s.restUsersRepo.LoginCustomer(request.Customer_email_id, request.Customer_password)
 	if err != nil {
 		return nil, rest_errors_package.NewInternalServerError("Failed to login", errors.New("Error"))
 	}
 
 	// Generate a new access token:
-	log.Println("Partner details -- Id ", partner.Id)
+	log.Println("Customer details -- Id ", customer.Customer_id)
 
-	at := access_token.GetNewAccessToken(partner.Id)
+	at := access_token.GetNewAccessToken(customer.Customer_id)
 	at.Generate()
 
-	log.Println("Access token has user id ", at.User_id);
+	log.Println("Access token has user id ", at.Customer_id);
 
 	// Save the new access token in Cassandra:
 	if err := s.dbRepo.Create(at); err != nil {

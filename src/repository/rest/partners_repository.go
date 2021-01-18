@@ -3,19 +3,20 @@ package rest
 import (
 	"encoding/json"
 	"errors"
-	"github.com/gpankaj/storage_access_tokken/src/domain/partners"
+	"github.com/gpankaj/customer_access_token/src/domain/customers"
 	"github.com/gpankaj/go-utils/rest_errors_package"
 	"github.com/mercadolibre/golang-restclient/rest"
 	"log"
+	"strings"
 	"time"
 )
 
 type RestPartnerRepostiryInterface interface {
 
-	LoginPartner(string, string)(*partners.Partner, *rest_errors_package.RestErr)
+	LoginCustomer(string, string)(*customers.Customer, *rest_errors_package.RestErr)
 }
 
-type restPartnerRepostiry struct {
+type restCustomerRepostiry struct {
 
 }
 
@@ -26,32 +27,36 @@ var (
 	}
 )
 func NewRepository() RestPartnerRepostiryInterface {
-	return &restPartnerRepostiry{}
+	return &restCustomerRepostiry{}
 }
 
-func (r *restPartnerRepostiry) LoginPartner(email string, password string) (*partners.Partner, *rest_errors_package.RestErr){
-	request:=partners.PartnerLoginRequest{Email_id: email, Password: password}
-	log.Println("Received email id ", request.Email_id)
-	log.Println("Received Password ", request.Password)
+func (r *restCustomerRepostiry) LoginCustomer(Customer_email_id string, Customer_password string) (*customers.Customer, *rest_errors_package.RestErr){
+	request:=customers.CustomerLoginRequest{Customer_email_id: strings.TrimSpace(Customer_email_id),
+		Customer_password: strings.TrimSpace(Customer_password)}
 
-	response := partnersRestClient.Post("/partners/login", request)
-	log.Println("Response ", response.Response.Status)
+	log.Println("Received email id", request.Customer_email_id)
+	log.Println("Received Password", request.Customer_password)
+
+	response := partnersRestClient.Post("/customers/login", request)
+
 
 	if response == nil || response.Response == nil  { //Timeout situation.
-		return nil, rest_errors_package.NewInternalServerError("invalid restClientRequest when trying to login partner", errors.New(""))
+		log.Println(response.Err.Error())
+		return nil, rest_errors_package.NewInternalServerError("invalid restClientRequest when trying to login customer",
+			errors.New(""))
 	}
 
 	if response.StatusCode > 299 { //Means we have an error situation.
 		var restError rest_errors_package.RestErr
 		err := json.Unmarshal(response.Bytes(), &restError)
 		if err!= nil {
-			return nil, rest_errors_package.NewInternalServerError("invalid error interface, when trying to login user", err)
+			return nil, rest_errors_package.NewInternalServerError("invalid error interface, when trying to login customer", err)
 		}
 		return nil, &restError
 	}
-	var partner partners.Partner
-	if err := json.Unmarshal(response.Bytes(), &partner); err!=nil {
-		return nil, rest_errors_package.NewInternalServerError("Mismatch in signature of partner data", err)
+	var customer customers.Customer
+	if err := json.Unmarshal(response.Bytes(), &customer); err!=nil {
+		return nil, rest_errors_package.NewInternalServerError("Mismatch in signature of customer data", err)
 	}
-	return &partner, nil
+	return &customer, nil
 }
